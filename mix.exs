@@ -71,7 +71,7 @@ defmodule Membrane.MP3.Lame.Mixfile do
     [
       {:membrane_core, "~> 1.0"},
       {:membrane_raw_audio_format, "~> 0.12.0"},
-      {:membrane_caps_audio_mpeg, "~> 0.2.0"},
+      {:membrane_mpegaudio_format, "~> 0.3"},
       {:membrane_common_c, "~> 0.16.0"},
       {:bunch, "~> 1.0"},
       {:bundlex, "~> 1.2"},
