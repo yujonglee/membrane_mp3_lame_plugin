@@ -14,14 +14,20 @@ defmodule Membrane.MP3.Lame.Encoder do
   @samples_per_frame 1152
   @channels 2
   @sample_size 4
+  @sample_rate 44_100
 
   def_output_pad :output,
-    accepted_format: %MPEGAudio{channels: 2, sample_rate: 44_100, layer: :layer3, version: :v1}
+    accepted_format: %MPEGAudio{
+      channels: @channels,
+      sample_rate: @sample_rate,
+      layer: :layer3,
+      version: :v1
+    }
 
   def_input_pad :input,
     accepted_format:
       any_of(
-        %RawAudio{sample_format: :s32le, sample_rate: 44_100, channels: 2},
+        %RawAudio{sample_format: :s32le, sample_rate: @sample_rate, channels: @channels},
         Membrane.RemoteStream
       )
 
@@ -86,11 +92,11 @@ defmodule Membrane.MP3.Lame.Encoder do
   @impl true
   def handle_playing(_ctx, state) do
     stream_format = %MPEGAudio{
-      channels: 2,
-      sample_rate: 44_100,
+      channels: @channels,
+      sample_rate: @sample_rate,
       version: :v1,
       layer: :layer3,
-      bitrate: 192
+      bitrate: state.options.bitrate
     }
 
     {[stream_format: {:output, stream_format}], state}

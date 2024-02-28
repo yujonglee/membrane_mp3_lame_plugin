@@ -1,6 +1,7 @@
 #include "encoder.h"
 
 static const int SAMPLE_SIZE = 4;
+static const int SAMPLE_RATE = 44100;
 static const int SAMPLES_PER_FRAME = 1152;
 // Magic numbers below taken from the worst case estimation in 'lame.h'
 #if (defined(__GNUC__) && __GNUC__ >= 8) ||                                    \
@@ -36,7 +37,7 @@ UNIFEX_TERM create(UnifexEnv *env, int channels, int bitrate, int quality) {
   lame_global_flags *lame_state = state->lame_state;
 
   lame_set_num_channels(lame_state, channels);
-  lame_set_in_samplerate(lame_state, 44100);
+  lame_set_in_samplerate(lame_state, SAMPLE_RATE);
   lame_set_brate(lame_state, bitrate);
   lame_set_quality(lame_state, quality);
 
@@ -73,6 +74,8 @@ UNIFEX_TERM encode_frame(UnifexEnv *env, UnifexPayload *buffer, State *state) {
 
   unifex_free(left_samples);
   unifex_free(right_samples);
+
+  // int result = lame_encode_buffer_interleaved(state->lame_state, samples, num_of_samples, state->mp3_buffer, MAX_MP3_BUFFER_SIZE);
 
   switch (result) {
   case MP3_BUFFER_TOO_SMALL:
