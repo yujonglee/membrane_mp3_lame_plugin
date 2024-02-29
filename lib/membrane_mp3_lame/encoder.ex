@@ -13,7 +13,7 @@ defmodule Membrane.MP3.Lame.Encoder do
 
   @samples_per_frame 1152
   @channels 1
-  @sample_size 4
+  @sample_size 2
   @sample_rate 8000
 
   def_output_pad :output,
@@ -27,7 +27,7 @@ defmodule Membrane.MP3.Lame.Encoder do
   def_input_pad :input,
     accepted_format:
       any_of(
-        %RawAudio{sample_format: :s32le, sample_rate: @sample_rate, channels: @channels},
+        %RawAudio{sample_format: :s16le, sample_rate: @sample_rate, channels: @channels},
         Membrane.RemoteStream
       )
 

@@ -1,6 +1,6 @@
 #include "encoder.h"
 
-static const int SAMPLE_SIZE = 4;
+static const int SAMPLE_SIZE = 2;
 static const int SAMPLE_RATE = 8000;
 static const int SAMPLES_PER_FRAME = 1152;
 // Magic numbers below taken from the worst case estimation in 'lame.h'
@@ -58,11 +58,11 @@ create_exit:
 UNIFEX_TERM encode_frame(UnifexEnv *env, UnifexPayload *buffer, State *state) {
   int num_of_samples = buffer->size / (state->channels * SAMPLE_SIZE);
 
-  int *samples = (int *)buffer->data;
+  short *samples = (short *)buffer->data;
 
 
   // Encode the buffer
-  int result = lame_encode_buffer_int(state->lame_state, samples,
+  int result = lame_encode_buffer(state->lame_state, samples,
                                       samples, num_of_samples,
                                       state->mp3_buffer, MAX_MP3_BUFFER_SIZE);
 
