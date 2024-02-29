@@ -1,14 +1,14 @@
 #include "encoder.h"
 
 static const int SAMPLE_SIZE = 4;
-static const int SAMPLE_RATE = 44100;
+static const int SAMPLE_RATE = 8000;
 static const int SAMPLES_PER_FRAME = 1152;
 // Magic numbers below taken from the worst case estimation in 'lame.h'
 #if (defined(__GNUC__) && __GNUC__ >= 8) ||                                    \
     (defined(__clang__) && __clang_major__ >= 6)
-static const int MAX_MP3_BUFFER_SIZE = 5 * SAMPLES_PER_FRAME / 4 + 7200;
+static const int MAX_MP3_BUFFER_SIZE = 5 * SAMPLES_PER_FRAME / SAMPLE_SIZE + 7200;
 #else
-#define MAX_MP3_BUFFER_SIZE (5 * SAMPLES_PER_FRAME / 4 + 7200)
+#define MAX_MP3_BUFFER_SIZE (5 * SAMPLES_PER_FRAME / SAMPLE_SIZE + 7200)
 #endif
 
 void handle_destroy_state(UnifexEnv *env, State *state) {
@@ -59,23 +59,13 @@ UNIFEX_TERM encode_frame(UnifexEnv *env, UnifexPayload *buffer, State *state) {
   int num_of_samples = buffer->size / (state->channels * SAMPLE_SIZE);
 
   int *samples = (int *)buffer->data;
-  int *left_samples = unifex_alloc(num_of_samples * SAMPLE_SIZE);
-  int *right_samples = unifex_alloc(num_of_samples * SAMPLE_SIZE);
 
-  for (int i = 0; i < num_of_samples; i++) {
-    left_samples[i] = samples[i * 2];
-    right_samples[i] = samples[i * 2 + 1];
-  }
 
   // Encode the buffer
-  int result = lame_encode_buffer_int(state->lame_state, left_samples,
-                                      right_samples, num_of_samples,
+  int result = lame_encode_buffer_int(state->lame_state, samples,
+                                      samples, num_of_samples,
                                       state->mp3_buffer, MAX_MP3_BUFFER_SIZE);
 
-  unifex_free(left_samples);
-  unifex_free(right_samples);
-
-  // int result = lame_encode_buffer_interleaved(state->lame_state, samples, num_of_samples, state->mp3_buffer, MAX_MP3_BUFFER_SIZE);
 
   switch (result) {
   case MP3_BUFFER_TOO_SMALL:

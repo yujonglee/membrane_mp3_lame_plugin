@@ -12,9 +12,9 @@ defmodule Membrane.MP3.Lame.Encoder do
   alias Membrane.RawAudio
 
   @samples_per_frame 1152
-  @channels 2
+  @channels 1
   @sample_size 4
-  @sample_rate 44_100
+  @sample_rate 8000
 
   def_output_pad :output,
     accepted_format: %MPEGAudio{
